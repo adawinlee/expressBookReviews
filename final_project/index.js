@@ -5,17 +5,7 @@ const customer_routes = require('./router/auth_users.js').authenticated;
 const genl_routes = require('./router/general.js').general;
 
 const users = require('./router/auth_users.js').users;
-
-const isValid = (username)=>{ //returns boolean
-    let userswithsamename = users.filter((user)=>{
-        return user.username === username
-    });
-    if(userswithsamename.length > 0){
-        return true;
-    } else {
-        return false;
-    }
-}
+const isValid = require('./router/auth_users.js').isValid;
 
 const app = express();
 
