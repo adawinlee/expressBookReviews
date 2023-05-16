@@ -4,6 +4,19 @@ const session = require('express-session')
 const customer_routes = require('./router/auth_users.js').authenticated;
 const genl_routes = require('./router/general.js').general;
 
+const users = require('./router/auth_users.js').users;
+
+const isValid = (username)=>{ //returns boolean
+    let userswithsamename = users.filter((user)=>{
+        return user.username === username
+    });
+    if(userswithsamename.length > 0){
+        return true;
+    } else {
+        return false;
+    }
+}
+
 const app = express();
 
 app.use(express.json());
@@ -26,7 +39,22 @@ app.use("/customer/auth/*", function auth(req,res,next){
         return res.status(403).json({message: "User not logged in"})
     }
 });
- 
+
+app.post("/register", (req,res) => {
+    const username = req.body.username;
+    const password = req.body.password;
+  
+    if (username && password) {
+        if (!isValid(username)) { 
+            users.push({"username":username,"password":password});
+            return res.status(200).json({message: "User successfully registred. Now you can login"});
+        } else {
+            return res.status(404).json({message: "User already exists!"});    
+        }
+    } 
+    return res.status(404).json({message: "Unable to register user."});
+});
+
 const PORT =5000;
 
 app.use("/customer", customer_routes);
